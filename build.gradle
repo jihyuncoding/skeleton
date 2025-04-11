@@ -14,7 +14,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     implementation 'org.apache.commons:commons-text:1.10.0'
-    implementation 'ch.qos.logback:logback-classic:1.4.12'
 
 
 
@@ -24,8 +23,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
     implementation 'com.mysql:mysql-connector-j:9.2.0'
 
-    // Logback Classic
-    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    implementation 'ch.qos.logback:logback-classic:1.4.12'
 
     implementation 'org.jsoup:jsoup:1.19.1'
 }
