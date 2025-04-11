@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    //CSV
+    implementation 'com.opencsv:opencsv:5.5'
+
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    implementation 'com.mysql:mysql-connector-j:9.2.0'
+
+    // Logback Classic
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
+    implementation 'org.jsoup:jsoup:1.19.1'
+}
+
+test {
+    useJUnitPlatform()
+}
