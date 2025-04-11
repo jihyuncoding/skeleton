@@ -17,10 +17,8 @@ dependencies {
 
 
 
-    //CSV
     implementation 'com.opencsv:opencsv:5.5'
 
-    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
     implementation 'com.mysql:mysql-connector-j:9.2.0'
 
     implementation 'ch.qos.logback:logback-classic:1.4.12'
