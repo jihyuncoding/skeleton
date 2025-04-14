@@ -1,8 +1,11 @@
 import dao.TravelDao;
+import dao.UserTravelDao;
 import model.TravelVO;
 import service.TravelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import service.UserTravelService;
+import util.ViewUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,9 +23,13 @@ public class TravelApp {
 
     private final Scanner sc;
     private final TravelService service;
+    private final UserTravelService userTravelService;
 
-    public TravelApp(TravelService service, Scanner sc) {
+
+
+    public TravelApp(TravelService service, UserTravelService userTravelService, Scanner sc) {
         this.service = service;
+        this.userTravelService = userTravelService;
         this.sc = sc;
     }
 
@@ -34,9 +41,14 @@ public class TravelApp {
 
                 TravelDao dao = new TravelDao(conn);
                 TravelService service = new TravelService(dao);
-                TravelApp app = new TravelApp(service, sc);
+
+                UserTravelDao userDao = new UserTravelDao(conn);
+                UserTravelService userService = new UserTravelService(userDao);
+
+                TravelApp app = new TravelApp(service, userService, sc);
 
                 app.run();
+
             } catch (SQLException e) {
                 logger.error("❌ 데이터베이스 연결 실패", e);
             }
@@ -48,9 +60,10 @@ public class TravelApp {
             showMainMenu();
             int choice = getUserChoice();
             switch (choice) {
-                case 1 -> service.showAllTravelInfoPaged(sc);
+                case 1 -> showListMenu();
                 case 2 -> showSearchMenu();
                 case 3 -> showFavoritesMenu();
+                case 4 -> runUserTravelMenu();
                 case 0 -> {
                     System.out.println("✅ 종료합니다.");
                     return;
@@ -65,9 +78,10 @@ public class TravelApp {
         System.out.println("""
             
             === 관광지 검색 시스템 ===
-            1. 전체 목록 보기
+            1. 관광지 목록 보기
             2. 검색
             3. 즐겨찾기
+            4. 나만의 관광지
             0. 종료하기
             """);
         System.out.print("선택: ");
@@ -82,6 +96,7 @@ public class TravelApp {
                 2. 제목 키워드로 검색
                 3. 제목 + 지역으로 검색
                 4. 카테고리(제목 또는 설명)로 검색
+                5. 랜덤 관광지 추천
                 0. 메인으로 돌아가기
                 """);
             System.out.print("선택: ");
@@ -92,6 +107,7 @@ public class TravelApp {
                 case 2 -> searchByKeyword();
                 case 3 -> searchByTitleAndDistrict();
                 case 4 -> searchByDescriptionKeyword();
+                case 5 -> showRandomRecommendation();
                 case 0 -> {
                     return;
                 }
@@ -124,33 +140,9 @@ public class TravelApp {
         String keyword = sc.nextLine();
 
         List<TravelVO> list = service.getTravelByKeyword(keyword);
-        if (list.isEmpty()) {
-            System.out.println("⚠️ 검색 결과가 없습니다.");
-            return;
-        }
-
-        service.showTravel(list, sc); // 페이징 출력
-
-        askForDetailOrBack(list);
+        util.ViewUtils.showTravelList(list, sc, service);
     }
 
-    private void askForDetailOrBack(List<TravelVO> list) {
-        System.out.print("\n상세보기할 번호를 입력하거나 [0]을 입력해 검색 메뉴로 돌아갑니다.\n>> ");
-        String input = sc.nextLine();
-        try {
-            int no = Integer.parseInt(input);
-            if (no == 0) return;
-
-            boolean exists = list.stream().anyMatch(vo -> vo.getNo() == no);
-            if (exists) {
-                service.showTravelByNo(no);
-            } else {
-                System.out.println("⚠️ 해당 번호는 검색 결과에 없습니다.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("⚠️ 숫자만 입력해주세요.");
-        }
-    }
 
     private void searchByTitleAndDistrict() {
         System.out.println("제목과 지역 키워드를 입력하세요 (예: 경복궁, 서울)");
@@ -158,7 +150,6 @@ public class TravelApp {
         while (true) {
             System.out.print(">> ");
             String input = sc.nextLine();
-
             String[] parts = input.split(",");
 
             if (parts.length == 2) {
@@ -170,18 +161,17 @@ public class TravelApp {
             }
 
             System.out.println("⚠️ 입력 형식이 올바르지 않습니다. 예: 경복궁, 서울");
-
         }
-
     }
+
 
     private void showFavoritesMenu() {
         while (true) {
             System.out.println("""
         
                 === ⭐ 즐겨찾기 메뉴 ===
-                1. 즐겨찾기 추가
-                2. 즐겨찾기 목록 보기
+                1. 즐겨찾기 목록 보기
+                2. 즐겨찾기 추가
                 3. 즐겨찾기 삭제
                 0. 메인으로 돌아가기
                 """);
@@ -189,8 +179,8 @@ public class TravelApp {
             int choice = getUserChoice();
 
             switch (choice) {
-                case 1 -> addToFavorites();
-                case 2 -> service.showFavorites(sc);
+                case 1 -> service.showFavorites(sc);
+                case 2 -> addToFavorites();
                 case 3 -> removeFromFavorites();
                 case 0 -> {
                     return;
@@ -226,6 +216,86 @@ public class TravelApp {
         } catch (NumberFormatException e) {
             System.out.println("⚠️ 숫자만 입력해주세요.");
         }
+    }
+
+    private void showRandomRecommendation() {
+        List<TravelVO> list = service.getRandomPlaces(3);
+        if (list.isEmpty()) {
+            System.out.println("⚠️ 추천할 관광지가 없습니다.");
+            return;
+        }
+
+        System.out.println("\n🎲 오늘의 랜덤 추천 관광지 🎲");
+        ViewUtils.showTravelList(list, sc, service); // 🔁 유틸 직접 호출
+    }
+
+    private void runUserTravelMenu() {
+        while (true) {
+            System.out.println("""
+            === 나만의 관광지 메뉴 ===
+            1. 관광지 추가
+            2. 내가 등록한 관광지 보기
+            3. 관광지 삭제
+            0. 메인 메뉴로 돌아가기
+            """);
+            System.out.print("선택: ");
+            String input = sc.nextLine();
+
+            switch (input) {
+                case "1" -> userTravelService.addUserTravelFromInput(sc);
+                case "2" -> userTravelService.showUserTravelList(sc);
+                case "3" -> userTravelService.deleteUserTravelByNo(sc);
+                case "0" -> { return; }
+                default -> System.out.println("⚠️ 잘못된 입력입니다.");
+            }
+        }
+    }
+
+    private void showListMenu() {
+        while (true) {
+            System.out.println("""
+            
+            === 🗂️ 목록 보기 ===
+            1. 전체 관광지 목록
+            2. 지역별 목록
+            0. 메인으로 돌아가기
+            """);
+            System.out.print("선택: ");
+            int choice = getUserChoice();
+
+            switch (choice) {
+                case 1 -> service.showAllTravelInfoPaged(sc);
+                case 2 -> showRegionList();  // 권역 선택 화면으로 이동
+                case 0 -> {
+                    return;
+                }
+                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+            }
+        }
+    }
+
+    private void showRegionList() {
+        String[] regions = {
+                "수도권", "충청권", "전라권", "경상권", "강원권", "제주권"
+        };
+
+        System.out.println("\n🌍 권역을 선택하세요:");
+        for (int i = 0; i < regions.length; i++) {
+            System.out.printf("%d. %s\n", i + 1, regions[i]);
+        }
+
+        System.out.print("번호 입력 (0: 돌아가기): ");
+        int input = getUserChoice();
+
+        if (input == 0) return;
+
+        if (input < 1 || input > regions.length) {
+            System.out.println("⚠️ 잘못된 번호입니다.");
+            return;
+        }
+
+        String selectedRegion = regions[input - 1];
+        service.showTravelByDistrict(selectedRegion, sc);  // 해당 권역으로 검색
     }
 
 }
