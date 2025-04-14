@@ -14,7 +14,7 @@ public class TravelApp {
 
     private static final String URL = "jdbc:mysql://localhost:3306/travel_db";
     private static final String USER = "root";
-    private static final String PASSWORD = "!123456";
+    private static final String PASSWORD = "!12345";
 
     private static final Logger logger = LoggerFactory.getLogger(TravelApp.class);
 
@@ -82,6 +82,7 @@ public class TravelApp {
                 2. 제목 키워드로 검색
                 3. 제목 + 지역으로 검색
                 4. 카테고리(제목 또는 설명)로 검색
+                5. 랜덤 관광지 추천
                 0. 메인으로 돌아가기
                 """);
             System.out.print("선택: ");
@@ -92,6 +93,7 @@ public class TravelApp {
                 case 2 -> searchByKeyword();
                 case 3 -> searchByTitleAndDistrict();
                 case 4 -> searchByDescriptionKeyword();
+                case 5 -> showRandomRecommendation();
                 case 0 -> {
                     return;
                 }
@@ -226,6 +228,22 @@ public class TravelApp {
         } catch (NumberFormatException e) {
             System.out.println("⚠️ 숫자만 입력해주세요.");
         }
+    }
+
+    private void showRandomRecommendation() {
+        List<TravelVO> list = service.getRandomPlaces(3);
+
+        if (list.isEmpty()) {
+            System.out.println("⚠️ 추천할 관광지가 없습니다.");
+            return;
+        }
+
+        System.out.println("\n🎲 오늘의 랜덤 추천 관광지 🎲");
+        for (TravelVO vo : list) {
+            System.out.println(vo);
+        }
+
+        askForDetailOrBack(list); // 상세보기 연결
     }
 
 }

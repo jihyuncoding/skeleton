@@ -194,4 +194,23 @@ public class TravelService {
         }
     }
 
+    public List<TravelVO> getRandomPlaces(int count) {
+        List<TravelVO> all = dao.selectAll();
+        List<TravelVO> result = new ArrayList<>();
+
+        if (all.isEmpty()) return result;
+
+        Random rand = new Random();
+        Set<Integer> selected = new HashSet<>();
+
+        while (selected.size() < Math.min(count, all.size())) {
+            int index = rand.nextInt(all.size());
+            if (selected.add(index)) {
+                result.add(all.get(index));
+            }
+        }
+
+        return result;
+    }
+
 }

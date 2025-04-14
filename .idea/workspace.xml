@@ -59,6 +59,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.TravelApp.executor": "Run",
     "Gradle.project [:TravelApp.main()].executor": "Run",
     "Gradle.project [classes].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -138,7 +139,7 @@
       <workItem from="1744604741203" duration="41000" />
       <workItem from="1744604803889" duration="104000" />
       <workItem from="1744604916951" duration="339000" />
-      <workItem from="1744605266645" duration="4365000" />
+      <workItem from="1744605266645" duration="6818000" />
     </task>
     <servers />
   </component>
