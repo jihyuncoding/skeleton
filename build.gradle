@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'org.example'
@@ -26,10 +28,22 @@ test {
     useJUnitPlatform()
 }
 
+application {
+    mainClass = 'TravelApp'
+}
+
 sourceSets {
     main {
         java {
             srcDirs = ['src']
         }
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': application.mainClass
+        )
     }
 }

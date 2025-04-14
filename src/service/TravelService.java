@@ -56,16 +56,14 @@ public class TravelService {
 
     public void showTravelByDistrict(String district) {
         List<TravelVO> list = dao.selectByDistrict(district);
-        for (TravelVO vo : list) {
-            System.out.println(vo);
-        }
+
+        showTravel(list);
     }
 
     public void showTravelByKeyword(String keyword) {
         List<TravelVO> list = dao.selectByKeyword(keyword);
-        for (TravelVO vo : list) {
-            System.out.println(vo);
-        }
+
+        showTravel(list);
     }
 
     public void showTravelByNo(int no) {
@@ -81,11 +79,20 @@ public class TravelService {
     }
 
     public void showTravelByTitleAndDistrict(String title, String district) {
-        List<TravelVO> list = dao.selectByTitleAndDistrict(title, district);
+        List<TravelVO> list = dao.selectByKeyword(title, district);
 
-        for (TravelVO vo : list) {
-            System.out.println(vo);
+        showTravel(list);
+    }
+
+    public void showTravel(List<TravelVO> list) {
+        if (list.isEmpty()) {
+            System.out.println("⚠️ 검색 결과가 없습니다.");
+        } else {
+            for (TravelVO vo : list) {
+                System.out.println(vo);
+            }
         }
     }
+
 
 }

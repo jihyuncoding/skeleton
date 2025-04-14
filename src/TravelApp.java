@@ -28,6 +28,11 @@ public class TravelApp {
         try (Scanner sc = new Scanner(System.in)) {
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
 
+                logger.info("✅ DB 연결 성공");
+
+                System.out.println("📦 현재 인코딩: " + System.getProperty("file.encoding"));
+
+
                 TravelDao dao = new TravelDao(conn);
                 TravelService service = new TravelService(dao);
                 TravelApp app = new TravelApp(service, sc);
@@ -79,7 +84,6 @@ public class TravelApp {
             return Integer.parseInt(input);
 
         } catch (NumberFormatException e) {
-            System.out.println("⚠️ 숫자만 입력해주세요!");
 
             return -1;
         }
@@ -113,7 +117,7 @@ public class TravelApp {
     }
 
     private void searchByTitleAndDistrict() {
-        System.out.println("제목과 지역을 입력하세요 (예: 경복궁, 서울)");
+        System.out.println("제목과 지역 키워드를 입력하세요 (예: 경복궁, 서울)");
 
         while (true) {
             System.out.print(">> ");

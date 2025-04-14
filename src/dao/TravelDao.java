@@ -28,9 +28,15 @@ public class TravelDao {
         return selectByQuery("SELECT * FROM travel WHERE title LIKE ?", "%" + keyword + "%");
     }
 
-    public List<TravelVO> selectByTitleAndDistrict(String title, String district) {
-        return selectByQuery("SELECT * FROM travel WHERE title = ? AND district = ?", title, district);
+    public List<TravelVO> selectByKeyword(String keyword1, String keyword2) {
+        return selectByQuery(
+                "SELECT * FROM travel WHERE (title LIKE ? OR district LIKE ?) AND (title LIKE ? OR district LIKE ?)",
+                "%" + keyword1 + "%", "%" + keyword1 + "%",
+                "%" + keyword2 + "%", "%" + keyword2 + "%"
+        );
     }
+
+
 
 
     public TravelVO selectByNo(int no) {
