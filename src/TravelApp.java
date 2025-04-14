@@ -11,7 +11,7 @@ public class TravelApp {
 
     private static final String URL = "jdbc:mysql://localhost:3306/travel_db";
     private static final String USER = "root";
-    private static final String PASSWORD = "thotpp8748";
+    private static final String PASSWORD = "!12345";
 
     private static final Logger logger = LoggerFactory.getLogger(TravelApp.class);
 
@@ -45,7 +45,7 @@ public class TravelApp {
             showMainMenu();
             int choice = getUserChoice();
             switch (choice) {
-                case 1 -> service.showAllTravelInfoPaged(sc);
+                case 1 -> showListMenu();
                 case 2 -> showSearchMenu();
                 case 3 -> showFavoritesMenu();
                 case 4 -> runUserTravelMenu(); // ✨ 추가된 나만의 관광지 메뉴
@@ -61,7 +61,7 @@ public class TravelApp {
     private void showMainMenu() {
         System.out.println("""
             === 관광지 검색 시스템 ===
-            1. 전체 목록 보기
+            1. 관광지 목록 보기
             2. 검색
             3. 즐겨찾기
             4. 나만의 관광지
@@ -391,4 +391,53 @@ public class TravelApp {
             e.printStackTrace();
         }
     }
+
+    private void showListMenu() {
+        while (true) {
+            System.out.println("""
+            
+            === 🗂️ 목록 보기 ===
+            1. 전체 관광지 목록
+            2. 지역별 목록
+            0. 메인으로 돌아가기
+            """);
+            System.out.print("선택: ");
+            int choice = getUserChoice();
+
+            switch (choice) {
+                case 1 -> service.showAllTravelInfoPaged(sc);
+                case 2 -> showRegionList();  // 권역 선택 화면으로 이동
+                case 0 -> {
+                    return;
+                }
+                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+            }
+        }
+    }
+
+    private void showRegionList() {
+        String[] regions = {
+                "수도권", "충청권", "전라권", "경상권", "강원권", "제주권"
+        };
+
+        System.out.println("\n🌍 권역을 선택하세요:");
+        for (int i = 0; i < regions.length; i++) {
+            System.out.printf("%d. %s\n", i + 1, regions[i]);
+        }
+
+        System.out.print("번호 입력 (0: 돌아가기): ");
+        int input = getUserChoice();
+
+        if (input == 0) return;
+
+        if (input < 1 || input > regions.length) {
+            System.out.println("⚠️ 잘못된 번호입니다.");
+            return;
+        }
+
+        String selectedRegion = regions[input - 1];
+        service.showTravelByDistrict(selectedRegion, sc);  // 해당 권역으로 검색
+    }
+
+
 }
