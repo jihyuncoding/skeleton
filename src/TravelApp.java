@@ -60,19 +60,20 @@ public class TravelApp {
                 case 1 -> showListMenu();
                 case 2 -> showSearchMenu();
                 case 3 -> showFavoritesMenu();
-                case 4 -> runUserTravelMenu(); // ✨ 추가된 나만의 관광지 메뉴
-
+                case 4 -> runUserTravelMenu();
                 case 0 -> {
                     System.out.println("✅ 종료합니다.");
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
 
+
     private void showMainMenu() {
         System.out.println("""
+            
             === 관광지 검색 시스템 ===
             1. 관광지 목록 보기
             2. 검색
@@ -83,18 +84,10 @@ public class TravelApp {
         System.out.print("선택: ");
     }
 
-    private int getUserChoice() {
-        String input = sc.nextLine();
-        try {
-            return Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
     private void showSearchMenu() {
         while (true) {
             System.out.println("""
+            
                 === 🔍 검색 메뉴 ===
                 1. 지역으로 검색
                 2. 제목 키워드로 검색
@@ -115,36 +108,42 @@ public class TravelApp {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
+        }
+    }
+
+
+    private int getUserChoice() {
+        String input = sc.nextLine();
+        try {
+            return Integer.parseInt(input);
+
+        } catch (NumberFormatException e) {
+
+            return -1;
         }
     }
 
     private void searchByDistrict() {
         System.out.print("지역 이름 입력: ");
         String district = sc.nextLine();
+
         service.showTravelByDistrict(district, sc);
     }
 
     private void searchByKeyword() {
         System.out.print("제목 키워드 입력: ");
         String keyword = sc.nextLine();
+
         List<TravelVO> list = service.getTravelByKeyword(keyword);
-
-
-        if (list.isEmpty()) {
-            System.out.println("⚠️ 검색 결과가 없습니다.");
-            return;
-        }
-
         util.ViewUtils.showTravelList(list, sc, service);
-        askForDetailOrBack(list)
-
     }
 
 
     private void searchByTitleAndDistrict() {
         System.out.println("제목과 지역 키워드를 입력하세요 (예: 경복궁, 서울)");
+
         while (true) {
             System.out.print(">> ");
             String input = sc.nextLine();
@@ -153,6 +152,7 @@ public class TravelApp {
             if (parts.length == 2) {
                 String title = parts[0].trim();
                 String district = parts[1].trim();
+
                 service.showTravelByTitleAndDistrict(title, district, sc);
                 return;
             }
@@ -161,17 +161,11 @@ public class TravelApp {
         }
     }
 
-    private void searchByDescriptionKeyword() {
-        System.out.print("설명 키워드 입력: ");
-        String keyword = sc.nextLine();
-        service.showTravelByDescriptionKeyword(keyword, sc);
-
-    }
-
 
     private void showFavoritesMenu() {
         while (true) {
             System.out.println("""
+        
                 === ⭐ 즐겨찾기 메뉴 ===
                 1. 즐겨찾기 목록 보기
                 2. 즐겨찾기 추가
@@ -188,9 +182,17 @@ public class TravelApp {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
+    }
+
+
+    private void searchByDescriptionKeyword() {
+        System.out.print("설명 키워드 입력: ");
+        String keyword = sc.nextLine();
+
+        service.showTravelByDescriptionKeyword(keyword, sc);
     }
 
     private void addToFavorites() {
@@ -221,10 +223,32 @@ public class TravelApp {
         }
 
         System.out.println("\n🎲 오늘의 랜덤 추천 관광지 🎲");
-        for (TravelVO vo : list) {
-            System.out.println(vo);
+        ViewUtils.showTravelList(list, sc, service); // 🔁 유틸 직접 호출
+    }
+
+    private void runUserTravelMenu() {
+
+        userTravelService.showUserTravelHelp();
+
+        while (true) {
+            System.out.println("""
+            === 나만의 관광지 메뉴 ===
+            1. 관광지 추가
+            2. 내가 등록한 관광지 보기
+            3. 관광지 삭제
+            0. 메인 메뉴로 돌아가기
+            """);
+            System.out.print("선택: ");
+            String input = sc.nextLine();
+
+            switch (input) {
+                case "1" -> userTravelService.addUserTravelFromInput(sc);
+                case "2" -> userTravelService.showUserTravelList(sc);
+                case "3" -> userTravelService.deleteUserTravelByNo(sc);
+                case "0" -> { return; }
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
+            }
         }
-        askForDetailOrBack(list);
     }
 
     private void showListMenu() {
@@ -245,7 +269,7 @@ public class TravelApp {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
@@ -266,7 +290,7 @@ public class TravelApp {
         if (input == 0) return;
 
         if (input < 1 || input > regions.length) {
-            System.out.println("⚠️ 잘못된 번호입니다.");
+            System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             return;
         }
 

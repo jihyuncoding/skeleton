@@ -44,7 +44,7 @@ public class TravelVO {
 
         return sb.toString();
     }
-    
+
     public void setDescription(String description) { this.description = description; }
 
     public String getAddress() { return address; }
