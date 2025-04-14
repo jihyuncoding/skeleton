@@ -1,20 +1,27 @@
 import dao.TravelDao;
-import model.TravelVO;
 import service.TravelService;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TravelApp {
-    public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/travel_db";
-        String user = "root";
-        String password = "(각자 비밀번호)"; // 본인 MySQL 비번
 
-        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+    private static final String URL = "jdbc:mysql://localhost:3306/travel_db";
+    private static final String USER = "root";
+    private static final String PASSWORD = "!123456";
+
+    private static final Logger logger = Logger.getLogger(TravelApp.class.getName());
+
+    public static void main(String[] args) {
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
             TravelDao dao = new TravelDao(conn);
             TravelService service = new TravelService(dao);
+
             Scanner sc = new Scanner(System.in);
 
             while (true) {
@@ -32,8 +39,8 @@ public class TravelApp {
                 }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "❌ 데이터베이스 연결 실패", e);
         }
     }
 }
