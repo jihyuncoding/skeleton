@@ -36,6 +36,14 @@ public class TravelDao {
         );
     }
 
+    public List<TravelVO> selectByCategoryKeyword(String keyword) {
+        return selectByQuery(
+                "SELECT * FROM travel WHERE title LIKE ? OR description LIKE ?",
+                "%" + keyword + "%", "%" + keyword + "%"
+        );
+    }
+
+
 
 
 
