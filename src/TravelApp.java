@@ -61,7 +61,7 @@ public class TravelApp {
 
     private void printMenu() {
         System.out.println("""
-            
+        
         === 관광지 검색 시스템 ===
         1. 전체 목록 보기
         2. 지역으로 검색
