@@ -93,14 +93,14 @@ public class TravelApp {
         System.out.print("지역 이름 입력: ");
         String district = sc.nextLine();
 
-        service.showTravelByDistrict(district);
+        service.showTravelByDistrict(district, sc);
     }
 
     private void searchByKeyword() {
         System.out.print("제목 키워드 입력: ");
         String keyword = sc.nextLine();
 
-        service.showTravelByKeyword(keyword);
+        service.showTravelByKeyword(keyword, sc);
     }
 
     private void showDetailByNo() {
@@ -129,7 +129,7 @@ public class TravelApp {
                 String title = parts[0].trim();
                 String district = parts[1].trim();
 
-                service.showTravelByTitleAndDistrict(title, district);
+                service.showTravelByTitleAndDistrict(title, district, sc);
                 return;
             }
 
