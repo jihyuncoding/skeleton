@@ -3,6 +3,11 @@ package service;
 import dao.TravelDao;
 import model.TravelVO;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
 
@@ -46,6 +51,39 @@ public class TravelService {
             System.out.println(vo);
             System.out.println("설명: " + vo.getDescription());
             System.out.println("전화번호: " + (vo.getPhone() == null || vo.getPhone().isEmpty() ? "없음" : vo.getPhone()));
+
+            Scanner sc = new Scanner(System.in);
+            while (true) {
+                System.out.print("\n[1] 브라우저로 열기  [0] 돌아가기 ▶ ");
+                String input = sc.nextLine();
+
+                switch (input) {
+                    case "1" -> {
+                        try {
+                            String encodedTitle = URLEncoder.encode(vo.getTitle(), StandardCharsets.UTF_8);
+                            String url = "https://korean.visitkorea.or.kr/search/search_list.do?keyword=" + encodedTitle;
+
+                            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                                Desktop.getDesktop().browse(URI.create(url));
+                                System.out.println("🌐 브라우저에서 '" + vo.getTitle() + "' 검색 결과를 엽니다.");
+                            } else {
+                                System.out.println("⚠️ 현재 환경에서는 브라우저 열기를 지원하지 않습니다.");
+                            }
+                        } catch (IOException e) {
+                            System.out.println("❌ 브라우저 열기 중 오류 발생: " + e.getMessage());
+                        }
+                        return;
+                    }
+
+                    case "0" -> {
+                        System.out.println("✅ 메인 화면으로 돌아갑니다.");
+                        return;
+                    }
+
+                    default -> System.out.println("⚠️ 잘못된 입력입니다. 다시 입력해주세요.");
+                }
+
+            }
 
         } else {
             System.out.println("⚠️ 해당 번호의 관광지를 찾을 수 없습니다.");
