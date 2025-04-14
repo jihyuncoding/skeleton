@@ -10,23 +10,29 @@ import java.util.*;
 public class TravelDao {
     private final Connection conn;
 
+
     private static final Logger logger = LoggerFactory.getLogger(TravelDao.class);
+
 
     public TravelDao(Connection conn) {
         this.conn = conn;
     }
 
+
     public List<TravelVO> selectAll() {
         return selectByQuery("SELECT * FROM travel");
     }
 
+
     public List<TravelVO> selectByDistrict(String district) {
-        return selectByQuery("SELECT * FROM travel WHERE district = ?", district);
+        return selectByQuery("SELECT * FROM travel WHERE district LIKE ?", "%" + district + "%");
     }
+
 
     public List<TravelVO> selectByKeyword(String keyword) {
         return selectByQuery("SELECT * FROM travel WHERE title LIKE ?", "%" + keyword + "%");
     }
+
 
     public List<TravelVO> selectByKeyword(String keyword1, String keyword2) {
         return selectByQuery(
@@ -36,15 +42,13 @@ public class TravelDao {
         );
     }
 
+
     public List<TravelVO> selectByCategoryKeyword(String keyword) {
         return selectByQuery(
                 "SELECT * FROM travel WHERE title LIKE ? OR description LIKE ?",
                 "%" + keyword + "%", "%" + keyword + "%"
         );
     }
-
-
-
 
 
     public TravelVO selectByNo(int no) {
@@ -65,6 +69,7 @@ public class TravelDao {
         return null;
     }
 
+
     private List<TravelVO> selectByQuery(String sql, Object... params) {
         List<TravelVO> list = new ArrayList<>();
 
@@ -83,6 +88,7 @@ public class TravelDao {
         }
         return list;
     }
+
 
     private TravelVO mapResultSetToVO(ResultSet rs) throws SQLException {
         return new TravelVO(
