@@ -29,7 +29,22 @@ public class TravelVO {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        if (description == null) return "";
+
+        String[] words = description.split("\\.\\s*");
+
+        StringBuilder sb = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.trim().isEmpty()) {
+                sb.append(word.trim()).append(".\n");
+            }
+        }
+
+        return sb.toString();
+    }
+    
     public void setDescription(String description) { this.description = description; }
 
     public String getAddress() { return address; }
