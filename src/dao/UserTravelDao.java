@@ -47,26 +47,6 @@ public class UserTravelDao {
         return list;
     }
 
-    public UserTravelVO selectByNo(int no) throws SQLException {
-        String sql = "SELECT * FROM user_travel WHERE no = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, no);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new UserTravelVO(
-                            rs.getInt("no"),
-                            rs.getString("district"),
-                            rs.getString("title"),
-                            rs.getString("description"),
-                            rs.getString("address"),
-                            rs.getString("phone")
-                    );
-                }
-            }
-        }
-        return null;
-    }
-
     public boolean delete(int no) throws SQLException {
         String sql = "DELETE FROM user_travel WHERE no = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
