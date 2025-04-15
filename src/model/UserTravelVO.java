@@ -1,6 +1,6 @@
 package model;
 
-public class TravelVO {
+public class UserTravelVO {
     private int no;
     private String district;
     private String title;
@@ -8,9 +8,7 @@ public class TravelVO {
     private String address;
     private String phone;
 
-    public TravelVO() {}
-
-    public TravelVO(int no, String district, String title, String description, String address, String phone) {
+    public UserTravelVO(int no, String district, String title, String description, String address, String phone) {
         this.no = no;
         this.district = district;
         this.title = title;
@@ -19,43 +17,21 @@ public class TravelVO {
         this.phone = phone;
     }
 
-    // Getters and Setters
     public int getNo() { return no; }
     public void setNo(int no) { this.no = no; }
-
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
-
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-
-    // 설명을 '.'를 기준으로 줄 단위 포맷
-    public String getDescription() {
-        if (description == null) return "";
-
-        String[] words = description.split("\\.\\s*");
-
-        StringBuilder sb = new StringBuilder();
-
-        for (String word : words) {
-            if (!word.trim().isEmpty()) {
-                sb.append(word.trim()).append(".\n");
-            }
-        }
-
-        return sb.toString();
-    }
-    
+    public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
-
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
     @Override
     public String toString() {
-        return "[" + no + "] " + title + " (" + district + ") - " + address;
+        return String.format("[%d] %s (%s) - %s", no, title, district, address);
     }
 }

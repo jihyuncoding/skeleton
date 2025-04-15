@@ -12,22 +12,28 @@ public class TravelDao {
 
     private static final Logger logger = LoggerFactory.getLogger(TravelDao.class);
 
+
     public TravelDao(Connection conn) {
         this.conn = conn;
     }
 
+
+    // 전체 관광지 목록
     public List<TravelVO> selectAll() {
         return selectByQuery("SELECT * FROM travel");
     }
 
+    // 지역명으로 검색
     public List<TravelVO> selectByDistrict(String district) {
-        return selectByQuery("SELECT * FROM travel WHERE district = ?", district);
+        return selectByQuery("SELECT * FROM travel WHERE district LIKE ?", "%" + district + "%");
     }
 
+    // 제목 키워드로 검색
     public List<TravelVO> selectByKeyword(String keyword) {
         return selectByQuery("SELECT * FROM travel WHERE title LIKE ?", "%" + keyword + "%");
     }
 
+    // 제목 + 지역으로 검색
     public List<TravelVO> selectByKeyword(String keyword1, String keyword2) {
         return selectByQuery(
                 "SELECT * FROM travel WHERE (title LIKE ? OR district LIKE ?) AND (title LIKE ? OR district LIKE ?)",
@@ -36,9 +42,15 @@ public class TravelDao {
         );
     }
 
+    // 제목 또는 설명으로 검색
+    public List<TravelVO> selectByCategoryKeyword(String keyword) {
+        return selectByQuery(
+                "SELECT * FROM travel WHERE title LIKE ? OR description LIKE ?",
+                "%" + keyword + "%", "%" + keyword + "%"
+        );
+    }
 
-
-
+    // 번호로 관광지 조회
     public TravelVO selectByNo(int no) {
         String sql = "SELECT * FROM travel WHERE no = ?";
 
@@ -57,6 +69,8 @@ public class TravelDao {
         return null;
     }
 
+
+    // 공통 쿼리 실행 메서드
     private List<TravelVO> selectByQuery(String sql, Object... params) {
         List<TravelVO> list = new ArrayList<>();
 
@@ -76,6 +90,7 @@ public class TravelDao {
         return list;
     }
 
+    // DB에서 상세 데이터 읽어 객체 반환
     private TravelVO mapResultSetToVO(ResultSet rs) throws SQLException {
         return new TravelVO(
                 rs.getInt("no"),
