@@ -43,6 +43,6 @@ src/
 - 외부 라이브러리:
   - `com.mysql:mysql-connector-j:9.2.0` : MySQL DB 연동
   - `org.slf4j:slf4j-api:2.0.17`, `ch.qos.logback:logback-classic:1.5.18` : 로깅 처리
-  - `com.opencsv:opencsv:5.5` : CSV 파일 파싱 (향후 확장 대비)
+  - `com.opencsv:opencsv:5.5` : CSV 파일 파싱
 
 ---
