@@ -65,4 +65,14 @@ public class UserTravelService {
             System.out.println("❌ 삭제 실패: " + e.getMessage());
         }
     }
+
+    // 나만의 관광지 도움말
+    public void showUserTravelHelp() {
+        System.out.println("\n📘 나만의 관광지 사용법");
+        System.out.println("-----------------------------------");
+        System.out.println("🔹 사용자가 직접 관광지를 등록하고 관리할 수 있습니다.");
+        System.out.println("🔹 등록 후에는 목록 확인 및 번호를 통한 삭제가 가능합니다.");
+        System.out.println("🔹 입력 형식 예시는 입력란 위에 안내되어 있습니다.");
+        System.out.println("-----------------------------------\n");
+    }
 }

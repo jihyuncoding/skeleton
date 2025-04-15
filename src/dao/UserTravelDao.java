@@ -13,6 +13,7 @@ public class UserTravelDao {
         this.conn = conn;
     }
 
+    // 사용자 관광지 등록
     public void insert(UserTravelVO vo) throws SQLException {
         String sql = "INSERT INTO user_travel (district, title, description, address, phone) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -25,6 +26,7 @@ public class UserTravelDao {
         }
     }
 
+    // 전체 사용자 등록 관광지
     public List<UserTravelVO> selectAll() throws SQLException {
         List<UserTravelVO> list = new ArrayList<>();
         String sql = "SELECT * FROM user_travel";
@@ -47,6 +49,7 @@ public class UserTravelDao {
         return list;
     }
 
+    // 사용자 등록 관광지 삭제
     public boolean delete(int no) throws SQLException {
         String sql = "DELETE FROM user_travel WHERE no = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

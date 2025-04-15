@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class ViewUtils {
 
 
+    // 관광지 목록 페이지 나눔 및 상세보기 템플릿
     public static void showTravelList(List<TravelVO> list, Scanner sc, TravelService service) {
         if (list == null || list.isEmpty()) {
             System.out.println("⚠️ 목록이 비어 있습니다.");
@@ -53,6 +54,7 @@ public class ViewUtils {
     }
 
 
+    // 상세보기 처리
     private static void showTravelDetail(List<TravelVO> list, Scanner sc, TravelService service) {
         System.out.print("상세보기할 번호 입력 ▶ ");
         try {
@@ -70,6 +72,7 @@ public class ViewUtils {
     }
 
 
+    // 사용자 관광지 페이지 나눔 및 상세보기 템플릿
     public static void showUserTravelList(List<UserTravelVO> list, Scanner sc) {
         if (list == null || list.isEmpty()) {
             System.out.println("⚠️ 목록이 비어 있습니다.");
@@ -113,6 +116,7 @@ public class ViewUtils {
     }
 
 
+    // 사용자 관광지 상세보기
     private static void showUserTravelDetail(List<UserTravelVO> list, Scanner sc) {
         System.out.print("상세보기할 번호 입력 ▶ ");
         try {

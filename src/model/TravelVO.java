@@ -29,6 +29,7 @@ public class TravelVO {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
+    // 설명을 '.'를 기준으로 줄 단위 포맷
     public String getDescription() {
         if (description == null) return "";
 

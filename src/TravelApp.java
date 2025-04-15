@@ -7,17 +7,14 @@ import org.slf4j.LoggerFactory;
 import service.UserTravelService;
 import util.ViewUtils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Scanner;
+import java.sql.*;
+import java.util.*;
 
 public class TravelApp {
 
     private static final String URL = "jdbc:mysql://localhost:3306/travel_db";
     private static final String USER = "root";
-    private static final String PASSWORD = "!123456";
+    private static final String PASSWORD = "!12345";
 
     private static final Logger logger = LoggerFactory.getLogger(TravelApp.class);
 
@@ -55,6 +52,7 @@ public class TravelApp {
         }
     }
 
+    // 메인 루프. 사용자의 메뉴 선택 처리
     public void run() {
         while (true) {
             showMainMenu();
@@ -63,17 +61,17 @@ public class TravelApp {
                 case 1 -> showListMenu();
                 case 2 -> showSearchMenu();
                 case 3 -> showFavoritesMenu();
-                case 4 -> runUserTravelMenu();
+                case 4 -> showUserTravelMenu();
                 case 0 -> {
                     System.out.println("✅ 종료합니다.");
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
 
-
+    // 메인 메뉴 출력
     private void showMainMenu() {
         System.out.println("""
             
@@ -87,6 +85,7 @@ public class TravelApp {
         System.out.print("선택: ");
     }
 
+    // 검색 관련 메뉴 출력
     private void showSearchMenu() {
         while (true) {
             System.out.println("""
@@ -111,12 +110,12 @@ public class TravelApp {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
 
-
+    // 사용자 입력값 정수로 전환
     private int getUserChoice() {
         String input = sc.nextLine();
         try {
@@ -128,6 +127,7 @@ public class TravelApp {
         }
     }
 
+    // 지역으로 검색
     private void searchByDistrict() {
         System.out.print("지역 이름 입력: ");
         String district = sc.nextLine();
@@ -135,6 +135,7 @@ public class TravelApp {
         service.showTravelByDistrict(district, sc);
     }
 
+    // 제목 키워드로 검색
     private void searchByKeyword() {
         System.out.print("제목 키워드 입력: ");
         String keyword = sc.nextLine();
@@ -144,6 +145,7 @@ public class TravelApp {
     }
 
 
+    // 제목 + 지역으로 검색
     private void searchByTitleAndDistrict() {
         System.out.println("제목과 지역 키워드를 입력하세요 (예: 경복궁, 서울)");
 
@@ -165,6 +167,7 @@ public class TravelApp {
     }
 
 
+    // 즐겨찾기 메뉴
     private void showFavoritesMenu() {
         while (true) {
             System.out.println("""
@@ -185,12 +188,13 @@ public class TravelApp {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
 
 
+    // 설명 키워드로 검색
     private void searchByDescriptionKeyword() {
         System.out.print("설명 키워드 입력: ");
         String keyword = sc.nextLine();
@@ -198,6 +202,7 @@ public class TravelApp {
         service.showTravelByDescriptionKeyword(keyword, sc);
     }
 
+    // 즐겨찾기 추가
     private void addToFavorites() {
         System.out.print("추가할 관광지 번호 입력: ");
         try {
@@ -208,6 +213,7 @@ public class TravelApp {
         }
     }
 
+    // 즐겨찾기 삭제
     private void removeFromFavorites() {
         System.out.print("삭제할 관광지 번호 입력: ");
         try {
@@ -218,6 +224,7 @@ public class TravelApp {
         }
     }
 
+    // 랜덤 관광지 추천
     private void showRandomRecommendation() {
         List<TravelVO> list = service.getRandomPlaces(3);
         if (list.isEmpty()) {
@@ -229,15 +236,19 @@ public class TravelApp {
         ViewUtils.showTravelList(list, sc, service); // 🔁 유틸 직접 호출
     }
 
-    private void runUserTravelMenu() {
+    // 사용자 등록 관광지 메뉴
+    private void showUserTravelMenu() {
+
+        userTravelService.showUserTravelHelp();
+
         while (true) {
             System.out.println("""
-            === 나만의 관광지 메뉴 ===
-            1. 관광지 추가
-            2. 내가 등록한 관광지 보기
-            3. 관광지 삭제
-            0. 메인 메뉴로 돌아가기
-            """);
+                === 나만의 관광지 메뉴 ===
+                1. 관광지 추가
+                2. 내가 등록한 관광지 보기
+                3. 관광지 삭제
+                0. 메인 메뉴로 돌아가기
+                """);
             System.out.print("선택: ");
             String input = sc.nextLine();
 
@@ -246,11 +257,12 @@ public class TravelApp {
                 case "2" -> userTravelService.showUserTravelList(sc);
                 case "3" -> userTravelService.deleteUserTravelByNo(sc);
                 case "0" -> { return; }
-                default -> System.out.println("⚠️ 잘못된 입력입니다.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
 
+    // 전체 목록 보기 메뉴
     private void showListMenu() {
         while (true) {
             System.out.println("""
@@ -265,16 +277,17 @@ public class TravelApp {
 
             switch (choice) {
                 case 1 -> service.showAllTravelInfoPaged(sc);
-                case 2 -> showRegionList();  // 권역 선택 화면으로 이동
+                case 2 -> showRegionMenu();
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("⚠️ 올바른 번호를 입력해주세요.");
+                default -> System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             }
         }
     }
 
-    private void showRegionList() {
+    // 권역 선택을 통한 목록 보기
+    private void showRegionMenu() {
         String[] regions = {
                 "수도권", "충청권", "전라권", "경상권", "강원권", "제주권"
         };
@@ -290,7 +303,7 @@ public class TravelApp {
         if (input == 0) return;
 
         if (input < 1 || input > regions.length) {
-            System.out.println("⚠️ 잘못된 번호입니다.");
+            System.out.println("⚠️ 올바른 메뉴 번호를 입력해주세요.");
             return;
         }
 

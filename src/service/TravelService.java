@@ -2,6 +2,8 @@ package service;
 
 import dao.TravelDao;
 import model.TravelVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.ViewUtils;
 
 import java.awt.*;
@@ -16,34 +18,42 @@ public class TravelService {
     private final TravelDao dao;
     private final Set<Integer> favoriteNos = new LinkedHashSet<>();
 
+    private static final Logger logger = LoggerFactory.getLogger(TravelService.class);
+
     public TravelService(TravelDao dao) {
         this.dao = dao;
     }
 
+    // 키워드 검색
     public List<TravelVO> getTravelByKeyword(String keyword) {
         return dao.selectByKeyword(keyword);
     }
 
+    // 전체 관광지 목록 보기
     public void showAllTravelInfoPaged(Scanner sc) {
         List<TravelVO> list = dao.selectAll();
         ViewUtils.showTravelList(list, sc, this);
     }
 
+    // 지역으로 검색 결과 출력
     public void showTravelByDistrict(String district, Scanner sc) {
         List<TravelVO> list = dao.selectByDistrict(district);
         ViewUtils.showTravelList(list, sc, this);
     }
 
+    // 제목 + 지역으로 검색 결과 출력
     public void showTravelByTitleAndDistrict(String title, String district, Scanner sc) {
         List<TravelVO> list = dao.selectByKeyword(title, district);
         ViewUtils.showTravelList(list, sc, this);
     }
 
+    // 설명 키워드로 검색
     public void showTravelByDescriptionKeyword(String keyword, Scanner sc) {
         List<TravelVO> list = dao.selectByCategoryKeyword(keyword);
         ViewUtils.showTravelList(list, sc, this);
     }
 
+    // 상세보기 및 브라우저 열기 옵션
     public void showTravelByNo(int no, Scanner sc) {
         TravelVO vo = dao.selectByNo(no);
         if (vo != null) {
@@ -70,6 +80,7 @@ public class TravelService {
     }
 
 
+    // 외부 사이트 검색 열기
     private void openInBrowser(String title) {
         try {
             String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
@@ -82,10 +93,11 @@ public class TravelService {
                 System.out.println("⚠️ 현재 환경에서는 브라우저 열기를 지원하지 않습니다.");
             }
         } catch (IOException e) {
-            System.out.println("❌ 브라우저 열기 중 오류 발생: " + e.getMessage());
+            logger.error("❌ 브라우저 열기 중 오류 발생", e);
         }
     }
 
+    // 즐겨찾기 추가
     public void addToFavorites(int no) {
         if (dao.selectByNo(no) != null) {
             favoriteNos.add(no);
@@ -95,6 +107,7 @@ public class TravelService {
         }
     }
 
+    // 즐겨찾기 삭제
     public void removeFromFavorites(int no) {
         if (favoriteNos.contains(no)) {
             favoriteNos.remove(no);
@@ -104,6 +117,7 @@ public class TravelService {
         }
     }
 
+    // 즐겨찾기 목록 보기
     public void showFavorites(Scanner sc) {
         if (favoriteNos.isEmpty()) {
             System.out.println("⭐ 즐겨찾기 목록이 비어 있습니다.");
@@ -119,6 +133,7 @@ public class TravelService {
         ViewUtils.showTravelList(list, sc, this);
     }
 
+    // 랜덤 관광지 추천
     public List<TravelVO> getRandomPlaces(int count) {
         List<TravelVO> all = dao.selectAll();
         List<TravelVO> result = new ArrayList<>();
